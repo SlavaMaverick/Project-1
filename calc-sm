@@ -1,0 +1,87 @@
+// Author: Slava Maverick. Name: Calculator SM.
+
+import java.util.Scanner;
+
+public class Main {
+    static Scanner scanner = new Scanner(System.in);
+    static String[] mathRoma = {"null", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
+            "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"};  // Матрица римских чисел
+
+    public static void main(String[] args) throws Exception {
+        System.out.println("""
+                Введите арабские числа (от -10 до 10) или римские (от I до X).\s
+                Формат ввода: Первое число, Пробел, Оператор. Пробел, Второе число.\s
+                Например, 5 + 7. После ввода нажмите Enter.\s
+                Input:""");
+        String input = scanner.nextLine();  // Ввод строки задания
+        System.out.println(calc(input));    // Вызов метода calc и вывод строки ответа
+    }
+
+    public static String calc(String input) throws Exception {
+        String[] inputs = input.split(" "); // Разбиваем строку на матрицу, используя пробел
+        if (inputs.length < 3) {  // В матрице должно быть три элемента (a b c), иначе исключение
+            throw new Exception("Т.к. строка не является математической операцией");
+        }
+        if (inputs.length > 3) {  // В матрице должно быть три элемента (a b c)
+            throw new Exception("Т.к. формат математической операции не удовлетворяет заданию");
+        }
+        String a = inputs[0], b = inputs[1], c = inputs[2];
+        // Ищем римские числа и переводим в арабские
+            boolean isRoma = false;
+            // Вызов Метода поиска римских цифр
+            if (checkIfRoma(c) & !checkIfRoma(a) | checkIfRoma(a) & !checkIfRoma(c)) {
+                throw new Exception("Т.к. используются одновременно разные системы счисления");
+            }
+            if (checkIfRoma(a) && checkIfRoma(c)) { 
+                a = valueOfRoma(a); // Вызов Метода перевода в арабские числа
+                c = valueOfRoma(c); // Вызов Метода перевода в арабские числа
+                isRoma = true; // Запоминаем, что есть римские числа
+            }
+        if (Integer.parseInt(a) > 10 | Integer.parseInt(a) < -10 | Integer.parseInt(c) > 10 | Integer.parseInt(c) < -10) {
+            throw new Exception("Т.к. недопустимое число"); // Ограничение на вводимые числа от -10 до 10.
+        }
+        // Собственно сам калькулятор)
+            int answer = 0;  
+            switch (b) {
+                case "+":
+                    answer = Integer.parseInt(a) + Integer.parseInt(c);
+                    break;
+                case "-":
+                    answer = Integer.parseInt(a) - Integer.parseInt(c);
+                    break;
+                case "*":
+                    answer = Integer.parseInt(a) * Integer.parseInt(c);
+                    break;
+                case "/":
+                    answer = Integer.parseInt(a) / Integer.parseInt(c);
+                    break;
+                default:
+                    throw new Exception("Т.к. указан неправильный оператор");
+            }
+        if (isRoma) { 
+            if (answer <= 0) { // Проверяем римские цифры на отрицательность
+                throw new Exception("Т.к. в римской системе нет отрицательных чисел");
+            }
+            return mathRoma[answer];  // Перводим обратно в арабские цифры
+        }
+        return String.valueOf(answer); // Возвращаем ответ для вывода
+    }
+
+    static boolean checkIfRoma(String s) { // Метод поиска римских чисел
+        for (int i = 0; i < mathRoma.length; i++) {
+            if (s.equals(mathRoma[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static String valueOfRoma(String s) { // Метод перевода римских в арабские числа
+        for (int i = 1; i < mathRoma.length; i++) {
+            if (mathRoma[i].equals(s)) {
+                return String.valueOf(i);
+            }
+        }
+        return "";
+    }
+}
